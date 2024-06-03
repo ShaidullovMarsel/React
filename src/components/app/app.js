@@ -1,3 +1,5 @@
+import { Component } from 'react';
+
 import AppFilter from '../app-filter/app-filter';
 import AppInfo from '../app-info/app-info';
 import SearchPanel from '../search-panel/search-panel';
@@ -7,29 +9,62 @@ import EmployersAddForm from '../employers-add-form/employers-add-form';
 import './app.css';
 
 
-function App() {
+class App extends Component {
 
-    const data = [
-        {name: 'John C.', salary: 800, increase: true, id: 1},
-        {name: 'Alex M.', salary: 2000, increase: false, id: 2},
-        {name: 'Marsel S.', salary: 5000, increase: true, id: 3},
-    ];
+    constructor(props) {
+        super(props);
+        this.state = {
+            data: [
+                {name: 'John C.', salary: 800, increase: true, id: 1},
+                {name: 'Alex M.', salary: 2000, increase: false, id: 2},
+                {name: 'Marsel S.', salary: 5000, increase: true, id: 3},
+            ]
+        }
+        this.maxId = 4;
+    }
 
-    return (
-        <div className="app">
-            <AppInfo/>
+    deleteItem = (id) => {
+        this.setState(({data}) => {
+            return {
+                data: data.filter(item => item.id !== id)
+            }
+        })
+    }
 
-            <div className="search-panel">
-                <SearchPanel/>
-                <AppFilter/>
+    addItem = (name, salary) => {
+        const newItem = {
+            name, 
+            salary,
+            increase: false,
+            id: this.maxId++
+        }
+        this.setState(({data}) => {
+            const newArr = [...data, newItem];
+            return {
+                data: newArr
+            }
+        });
+    }
+
+    render() {
+        return (
+            <div className="app">
+                <AppInfo/>
+    
+                <div className="search-panel">
+                    <SearchPanel/>
+                    <AppFilter/>
+                </div>
+    
+                <EmployersList data={this.state.data}
+                onDelete={this.deleteItem}/>
+    
+                <EmployersAddForm
+                onAdd={this.addItem}/>
+                
             </div>
-
-            <EmployersList data={data}/>
-
-            <EmployersAddForm/>
-            
-        </div>
-    )
+        )
+    }
 }
 
 export default App;
